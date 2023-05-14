@@ -51,3 +51,27 @@ class TemperatureEngine:
         if msb[0] == 1:
             temperature = 0 - temperature
         return temperature
+
+
+    def watermark_integer(self, bit):
+        lsb = "{0:08b}".format(int(self.lsb, 16))
+        lsb = lsb[0] + lsb[1] + lsb[2] + bit + lsb[4] + lsb[5] + lsb[6] + lsb[7]
+        lsb = hex(int(lsb, 2))
+        self.lsb = lsb[2] + lsb[3]
+        return
+
+
+    def watermark_decimal(self, bit):
+        lsb = "{0:08b}".format(int(self.lsb, 16))
+        lsb = lsb[0] + lsb[1] + lsb[2] + lsb[3] + lsb[4] + lsb[5] + lsb[6] + bit
+        lsb = hex(int(lsb, 2))
+        self.lsb = lsb[2] + lsb[3]
+        return
+
+
+    def watermark_config_reg(self):
+        return
+
+
+    def watermark_sign(self):
+        return
