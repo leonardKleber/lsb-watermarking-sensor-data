@@ -1,9 +1,8 @@
 class TemperatureEngine:
     def __init__(self, scratchpad):
+        self.scratchpad = scratchpad
         self.resolution = self.define_resolution(scratchpad[4])
         self.decimal_step = self.decimal_step()
-        self.lsb = scratchpad[0]
-        self.msb = scratchpad[1]
 
 
     def define_resolution(self, config_reg):
@@ -31,8 +30,8 @@ class TemperatureEngine:
 
 
     def read_temperature(self):
-        lsb = "{0:08b}".format(int(self.lsb, 16))
-        msb = "{0:08b}".format(int(self.msb, 16))
+        lsb = "{0:08b}".format(int(self.scratchpad[0], 16))
+        msb = "{0:08b}".format(int(self.scratchpad[1], 16))
         temp_int_binary = msb[5] + msb[6] + msb[7] + lsb[0] + lsb[1] + lsb[2] + lsb[3]
         temp_int = int('0b' + temp_int_binary, 2)
         temp_int = float(temp_int)
@@ -53,19 +52,27 @@ class TemperatureEngine:
         return temperature
 
 
-    def watermark_integer(self, bit):
-        lsb = "{0:08b}".format(int(self.lsb, 16))
-        lsb = lsb[0] + lsb[1] + lsb[2] + bit + lsb[4] + lsb[5] + lsb[6] + lsb[7]
+    def watermark_integer(self, watermark):
+        lsb = "{0:08b}".format(int(self.scratchpad[0], 16))
+        lsb = lsb[0] + lsb[1] + lsb[2] + watermark + lsb[4] + lsb[5] + lsb[6] + lsb[7]
         lsb = hex(int(lsb, 2))
-        self.lsb = lsb[2] + lsb[3]
+        self.scratchpad[0] = lsb[2] + lsb[3]
         return
 
 
+    def verify_watermark_integer(self, watermark):
+        lsb = "{0:08b}".format(int(self.scratchpad[0], 16))
+        if lsb[3] == watermark:
+            return True
+        else:
+            return False
+
+
     def watermark_decimal(self, bit):
-        lsb = "{0:08b}".format(int(self.lsb, 16))
+        lsb = "{0:08b}".format(int(self.scratchpad[0], 16))
         lsb = lsb[0] + lsb[1] + lsb[2] + lsb[3] + lsb[4] + lsb[5] + lsb[6] + bit
         lsb = hex(int(lsb, 2))
-        self.lsb = lsb[2] + lsb[3]
+        self.scratchpad[0] = lsb[2] + lsb[3]
         return
 
 
