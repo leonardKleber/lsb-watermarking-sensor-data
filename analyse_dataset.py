@@ -48,7 +48,7 @@ def std_deviation(temperatures: list):
 
 if __name__ == '__main__':
     # Get sample dataset from file.
-    f = open('sample_dataset.json', 'rb')
+    f = open('results.json', 'rb')
     sample_dataset = json.load(f)
     f.close()
     # Measure the standard deviation of the sample dataset.
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         temp_int = TemperatureEngine(i)
         temp_int.watermark_integer('1')
         t_int.append(temp_int.read_temperature())
-    print('Standard Deviation of dataset with integer watermark: ' + str(std_deviation(t_int)))
+    print('Standard Deviation of dataset with capacity 1  integer watermark: ' + str(std_deviation(t_int)))
     # Measure the standard deviation of the sample dataset with decimal watermark.
     form_dec = format_dataset(sample_dataset)
     t_dec = []
@@ -70,4 +70,48 @@ if __name__ == '__main__':
         temp_dec = TemperatureEngine(i)
         temp_dec.watermark_decimal('1')
         t_dec.append(temp_dec.read_temperature())
-    print('Standard Deviation of dataset with decimal watermark: ' + str(std_deviation(t_dec)))
+    print('Standard Deviation of dataset with capacity 1 decimal watermark: ' + str(std_deviation(t_dec)))
+
+    dataset_0 = format_dataset(sample_dataset)
+    temperatures_0 = []
+    counter = 0
+    for i in dataset_0:
+        temp_dec = TemperatureEngine(i)
+        if counter % 2 == 0:
+            temp_dec.watermark_decimal('1')
+        temperatures_0.append(temp_dec.read_temperature())
+        counter = counter + 1
+    print('Standard Deviation of dataset with capacity 0.5 decimal watermark: ' + str(std_deviation(temperatures_0)))
+
+    dataset_1 = format_dataset(sample_dataset)
+    temperatures_1 = []
+    counter = 0
+    for i in dataset_1:
+        temp_int = TemperatureEngine(i)
+        if counter % 2 == 0:
+            temp_int.watermark_integer('1')
+        temperatures_1.append(temp_int.read_temperature())
+        counter = counter + 1
+    print('Standard Deviation of dataset with capacity 0.5 integer watermark: ' + str(std_deviation(temperatures_1)))
+
+    dataset_2 = format_dataset(sample_dataset)
+    temperatures_2 = []
+    counter = 0
+    for i in dataset_2:
+        temp_int = TemperatureEngine(i)
+        if counter % 4 == 0:
+            temp_int.watermark_integer('1')
+        temperatures_2.append(temp_int.read_temperature())
+        counter = counter + 1
+    print('Standard Deviation of dataset with capacity 0.25 integer watermark: ' + str(std_deviation(temperatures_2)))
+
+    dataset_3 = format_dataset(sample_dataset)
+    temperatures_3 = []
+    counter = 0
+    for i in dataset_3:
+        temp_int = TemperatureEngine(i)
+        if counter % 10 == 0:
+            temp_int.watermark_integer('1')
+        temperatures_3.append(temp_int.read_temperature())
+        counter = counter + 1
+    print('Standard Deviation of dataset with capacity 0.1 integer watermark: ' + str(std_deviation(temperatures_3)))

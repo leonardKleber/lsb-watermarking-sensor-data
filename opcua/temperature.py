@@ -76,9 +76,17 @@ class TemperatureEngine:
         return
 
 
-    def watermark_config_reg(self):
+    def double_watermark_decimal(self, bit1, bit2):
+        lsb = "{0:08b}".format(int(self.scratchpad[0], 16))
+        lsb = lsb[0] + lsb[1] + lsb[2] + lsb[3] + lsb[4] + lsb[5] + bit1 + bit2
+        lsb = hex(int(lsb, 2))
+        self.scratchpad[0] = lsb[2] + lsb[3]
         return
 
 
-    def watermark_sign(self):
-        return
+    def verify_double_watermark_decimal(self, bit1, bit2):
+        lsb = "{0:08b}".format(int(self.scratchpad[0], 16))
+        if lsb[6] == bit1 and lsb[7] == bit2:
+            return True
+        else:
+            return False
